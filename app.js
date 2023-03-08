@@ -4,15 +4,25 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 
+import { fileURLToPath } from "url";
+import mongoose from "mongoose";
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
-import { fileURLToPath } from "url";
+
+mongoose.set("strictQuery", false);
 
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
-var app = express();
+const app = express();
 
+const mongoDB = "mongodb://localhost/local-library";
+
+async function main() {
+  await mongoose.connect(mongoDB);
+}
+
+main().catch((err) => console.log(err));
 // view engine setuimport path from 'path';
 
 app.set("views", path.join(__dirname, "views"));
@@ -28,12 +38,12 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
