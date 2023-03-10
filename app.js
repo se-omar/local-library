@@ -9,20 +9,20 @@ import mongoose from "mongoose";
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
 
-mongoose.set("strictQuery", false);
 
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 const app = express();
 
+mongoose.set("strictQuery", false);
 const mongoDB = "mongodb://localhost/local-library";
 
-async function main() {
+async function dbConnect() {
   await mongoose.connect(mongoDB);
 }
 
-main().catch((err) => console.log(err));
+dbConnect().catch((err) => console.log(err));
 // view engine setuimport path from 'path';
 
 app.set("views", path.join(__dirname, "views"));
