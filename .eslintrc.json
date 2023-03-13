@@ -19,6 +19,16 @@
       {
         "allowAfterThis": true
       }
-    ]
+    ],
+"import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "always",
+        "jsx": "always",
+        "ts": "always",
+        "tsx": "always"
+      }
+   ]
   }
 }
