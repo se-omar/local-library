@@ -1,4 +1,4 @@
-import Author from "../models/author";
+import Author from "../models/author.js";
 
 // Display list of all Authors.
 export const authorList = (req, res) => {

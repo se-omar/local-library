@@ -133,4 +133,4 @@ router.get("/bookinstance/:id", bookInstanceController.bookinstanceDetail);
 // GET request for list of all BookInstance.
 router.get("/bookinstances", bookInstanceController.bookinstanceList);
 
-module.exports = router;
+export default router;

@@ -11,7 +11,7 @@ export const genreDetail = (req, res) => {
 };
 
 // Display Genre create form on GET.
-export const genreCreate_get = (req, res) => {
+export const genreCreateGet = (req, res) => {
   res.send("NOT IMPLEMENTED: Genre create GET");
 };
 
