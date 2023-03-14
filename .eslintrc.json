@@ -20,7 +20,7 @@
         "allowAfterThis": true
       }
     ],
-"import/extensions": [
+    "import/extensions": [
       "error",
       "ignorePackages",
       {
@@ -29,6 +29,10 @@
         "ts": "always",
         "tsx": "always"
       }
-   ]
+    ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ]
   }
 }

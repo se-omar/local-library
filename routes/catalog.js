@@ -4,7 +4,7 @@ import express from "express";
 import * as bookController from "../controllers/bookController.js";
 import * as authorController from "../controllers/authorController.js";
 import * as genreController from "../controllers/genreController.js";
-import * as bookInstanceController from "../controllers/bookinstanceController.js";
+import * as bookInstanceController from "../controllers/bookInstanceController.js";
 
 const router = express.Router();
 
@@ -91,7 +91,8 @@ router.get("/genres", genreController.genreList);
 
 /// BOOKINSTANCE ROUTES ///
 
-// GET request for creating a BookInstance. NOTE This must come before route that displays BookInstance (uses id).
+// GET request for creating a BookInstance.
+// NOTE This must come before route that displays BookInstance (uses id).
 router.get(
   "/bookinstance/create",
   bookInstanceController.bookinstanceCreateGet
