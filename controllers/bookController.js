@@ -4,33 +4,34 @@ import BookInstance from "../models/bookInstance.js";
 import Genre from "../models/genre.js";
 import Author from "../models/author.js";
 
-export const index = (req, res) => {
-  async.parallel(
-    {
-      bookCount(callback) {
-        Book.countDocuments({}, callback);
+export const index = async (req, res) => {
+  try {
+    const [
+      bookCount,
+      genreCount,
+      bookInstanceCount,
+      bookInstanceAvailableCount,
+      authorCount,
+    ] = await Promise.all([
+      Book.count({}),
+      Genre.count({}),
+      BookInstance.count({}),
+      BookInstance.count({ status: "available" }),
+      Author.count({}),
+    ]);
+
+    res.render("index", {
+      title: "local library home",
+      data: {
+        bookCount, genreCount, bookInstanceCount, bookInstanceAvailableCount, authorCount,
       },
-      genreCount(callback) {
-        Genre.countDocuments({}, callback);
-      },
-      bookInstanceCount(callback) {
-        BookInstance.countDocuments({}, callback);
-      },
-      bookInstanceAvailableCount(callback) {
-        BookInstance.countDocuments({ status: "available" }, callback);
-      },
-      authorCount(callback) {
-        Author.countDocuments({}, callback);
-      },
-    },
-    (err, result) => {
-      res.render("index", {
-        title: "local library home",
-        error: err,
-        data: result,
-      });
-    }
-  );
+    });
+  } catch (err) {
+    res.render("index", {
+      title: "local library home",
+      err,
+    });
+  }
 };
 
 // Display list of all books.
