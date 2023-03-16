@@ -29,10 +29,6 @@
         "ts": "always",
         "tsx": "always"
       }
-    ],
-    "comma-dangle": [
-      "error",
-      "never"
     ]
   }
 }
