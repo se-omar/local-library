@@ -4,7 +4,6 @@ import Author from "../models/author.js";
 export const authorList = async (req, res, next) => {
   try {
     const authors = await Author.find().sort([["family_name", "ascending"]]);
-    console.log("authors: ", authors)
     res.render("authorList", {
       title: "Author List",
       authorList: authors,

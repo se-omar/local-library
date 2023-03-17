@@ -1,4 +1,3 @@
-import async from "async";
 import Book from "../models/book.js";
 import BookInstance from "../models/bookInstance.js";
 import Genre from "../models/genre.js";
@@ -38,7 +37,6 @@ export const index = async (req, res) => {
 export const bookList = async (req, res, next) => {
   try {
     const books = await Book.find({}, "title author").sort({ title: 1 }).populate("author");
-    console.log("books: ", books);
     res.render("bookList", { title: "Book List", bookList: books });
   } catch (err) {
     next(err);
@@ -46,8 +44,27 @@ export const bookList = async (req, res, next) => {
 };
 
 // Display detail page for a specific book.
-export const bookDetail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Book detail: ${req.params.id}`);
+export const bookDetail = async (req, res, next) => {
+  try {
+    const [book, bookInstances] = await Promise.all([
+      Book.findById(req.params.id).populate("author").populate("genre"),
+      BookInstance.find({ book: req.params.id }),
+    ]);
+
+    if (book == null) {
+      const err = new Error("Book not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    return res.render("bookDetail", {
+      title: book.title,
+      book,
+      bookInstances,
+    });
+  } catch (err) {
+    return next(err);
+  }
 };
 
 // Display book create form on GET.
