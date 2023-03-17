@@ -1,4 +1,5 @@
 import Genre from "../models/genre.js";
+import Book from "../models/book.js";
 
 // Display list of all Genre.
 export const genreList = async (req, res, next) => {
@@ -14,8 +15,26 @@ export const genreList = async (req, res, next) => {
 };
 
 // Display detail page for a specific Genre.
-export const genreDetail = (req, res) => {
-  res.send(`NOT IMPLEMENTED: Genre detail: ${req.params.id}`);
+export const genreDetail = async (req, res, next) => {
+  try {
+    const [genre, genreBooks] = await Promise.all([
+      Genre.findById(req.params.id),
+      Book.find({ genre: req.params.id }),
+    ]);
+    if (genre == null) {
+      const err = new Error("Genre not found");
+      err.status = 404;
+      return next(err);
+    }
+
+    return res.render("genreDetail", {
+      title: "Genre Detail",
+      genre,
+      genreBooks,
+    });
+  } catch (err) {
+    return next(err);
+  }
 };
 
 // Display Genre create form on GET.
