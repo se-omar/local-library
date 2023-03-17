@@ -35,8 +35,14 @@ export const index = async (req, res) => {
 };
 
 // Display list of all books.
-export const bookList = (req, res) => {
-  res.send("NOT IMPLEMENTED: Book list");
+export const bookList = async (req, res, next) => {
+  try {
+    const books = await Book.find({}, "title author").sort({ title: 1 }).populate("author");
+    console.log("books: ", books);
+    res.render("bookList", { title: "Book List", bookList: books });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Display detail page for a specific book.
