@@ -1,8 +1,17 @@
 import Author from "../models/author.js";
 
 // Display list of all Authors.
-export const authorList = (req, res) => {
-  res.send("NOT IMPLEMENTED: Author list");
+export const authorList = async (req, res, next) => {
+  try {
+    const authors = await Author.find().sort([["family_name", "ascending"]]);
+    console.log("authors: ", authors)
+    res.render("authorList", {
+      title: "Author List",
+      authorList: authors,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 // Display detail page for a specific Author.
