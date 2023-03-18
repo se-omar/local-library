@@ -65,10 +65,8 @@ export const genreCreatePost = [
     if (foundGenre) {
       return res.redirect(foundGenre.url);
     }
-    return genre.save((err) => {
-      if (err) {
-        next(err);
-      } else res.redirect(genre.url);
+    return genre.save().then(() => {
+      res.redirect(genre.url);
     });
   },
 ];
