@@ -17,6 +17,10 @@
     "no-underscore-dangle": [
       "error",
       {
+        "allow": [
+          "__filename",
+          "__dirname"
+        ],
         "allowAfterThis": true
       }
     ],
