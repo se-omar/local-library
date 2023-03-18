@@ -1,3 +1,4 @@
+import { body, validationResult } from "express-validator";
 import Genre from "../models/genre.js";
 import Book from "../models/book.js";
 
@@ -39,13 +40,38 @@ export const genreDetail = async (req, res, next) => {
 
 // Display Genre create form on GET.
 export const genreCreateGet = (req, res) => {
-  res.send("NOT IMPLEMENTED: Genre create GET");
+  res.render("genreForm", { title: "Create Genre" });
 };
 
 // Handle Genre create on POST.
-export const genreCreatePost = (req, res) => {
-  res.send("NOT IMPLEMENTED: Genre create POST");
-};
+export const genreCreatePost = [
+  // Validate and sanitize the name field.
+  body("name", "Genre name required").trim().isLength({ min: 1 }).escape(),
+
+  // Process request after validation and sanitization.
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    const genre = new Genre({ name: req.body.name });
+
+    if (!errors.isEmpty()) {
+      return res.render("genreForm", {
+        title: "Create Genre",
+        genre,
+        errors: errors.array(),
+      });
+    }
+
+    const foundGenre = await Genre.findOne({ name: req.body.name });
+    if (foundGenre) {
+      return res.redirect(foundGenre.url);
+    }
+    return genre.save((err) => {
+      if (err) {
+        next(err);
+      } else res.redirect(genre.url);
+    });
+  },
+];
 
 // Display Genre delete form on GET.
 export const genreDeleteGet = (req, res) => {
