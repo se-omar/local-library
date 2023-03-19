@@ -33,6 +33,7 @@
         "ts": "always",
         "tsx": "always"
       }
-    ]
+    ],
+  "linebreak-style": 0
   }
 }
