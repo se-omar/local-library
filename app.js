@@ -6,9 +6,12 @@ import logger from "morgan";
 
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
+import * as dotenv from "dotenv";
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
 import catalogRouter from "./routes/catalog.js";
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -16,7 +19,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 mongoose.set("strictQuery", false);
-const mongoDB = "mongodb://127.0.0.1:27017/local-library?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.0";
+const mongoDB = process.env.MONGO_CONN;
 
 async function dbConnect() {
   await mongoose.connect(mongoDB);
