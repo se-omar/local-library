@@ -14,16 +14,7 @@
       "error",
       "double"
     ],
-    "no-underscore-dangle": [
-      "error",
-      {
-        "allow": [
-          "__filename",
-          "__dirname"
-        ],
-        "allowAfterThis": true
-      }
-    ],
+    "no-underscore-dangle": 0,
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -34,6 +25,7 @@
         "tsx": "always"
       }
     ],
-  "linebreak-style": 0
+    "linebreak-style": 0,
+    "no-param-reassign": 0
   }
 }
