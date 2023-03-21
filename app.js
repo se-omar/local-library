@@ -16,7 +16,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 mongoose.set("strictQuery", false);
-const mongoDB = "mongodb+srv://omar1:eshta@myatlasclusteredu.hszplt3.mongodb.net/local-library?retryWrites=true&w=majority";
+const mongoDB = "mongodb://127.0.0.1:27017/local-library?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.0";
 
 async function dbConnect() {
   await mongoose.connect(mongoDB);
