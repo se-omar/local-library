@@ -103,13 +103,81 @@ export const authorCreatePost = [
   },
 ];
 // Display Author delete form on GET.
-export const authorDeleteGet = (req, res) => {
-  res.send("NOT IMPLEMENTED: Author delete GET");
+export const authorDeleteGet = (req, res, next) => {
+  try {
+    const [author, authorBooks] = Promise.all([
+      Author.findById(req.params.id),
+      Book.find({ author: req.params.id }),
+    ]);
+
+    if (author == null) {
+      return res.redirect("/catalog/authors");
+    }
+
+    return res.render("authorDelete", {
+      title: "Delete Author",
+      author,
+      authorBooks,
+    });
+  } catch (err) {
+    return next(err);
+  }
 };
 
 // Handle Author delete on POST.
-export const authorDeletePost = (req, res) => {
-  res.send("NOT IMPLEMENTED: Author delete POST");
+export const authorDeletePost = async (req, res, next) => {
+  try {
+    const [author, authorBooks] = await Promise.all([
+      Author.findById(req.params.id),
+      Book.find({ author: req.params.id }),
+    ]);
+
+    if (authorBooks.length > 0) {
+      return res.render("authorDelete", {
+        title: "Delete Author",
+        author,
+        authorBooks,
+      });
+    }
+
+    await Author.findByIdAndRemove(req.body.authorid);
+    return res.redirect("/catalog/authors");
+  } catch (err) {
+    return next(err);
+  }
+  async.parallel(
+    {
+      author(callback) {
+        Author.findById(req.body.authorid).exec(callback);
+      },
+      authors_books(callback) {
+        Book.find({ author: req.body.authorid }).exec(callback);
+      },
+    },
+    (err, results) => {
+      if (err) {
+        return next(err);
+      }
+      // Success
+      if (results.authors_books.length > 0) {
+        // Author has books. Render in same way as for GET route.
+        res.render("author_delete", {
+          title: "Delete Author",
+          author: results.author,
+          author_books: results.authors_books,
+        });
+        return;
+      }
+      // Author has no books. Delete object and redirect to the list of authors.
+      Author.findByIdAndRemove(req.body.authorid, (err) => {
+        if (err) {
+          return next(err);
+        }
+        // Success - go to author list
+        res.redirect("/catalog/authors");
+      });
+    },
+  );
 };
 
 // Display Author update form on GET.
