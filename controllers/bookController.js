@@ -1,3 +1,4 @@
+import { body, validationResult } from "express-validator";
 import Book from "../models/book.js";
 import BookInstance from "../models/bookInstance.js";
 import Genre from "../models/genre.js";
@@ -71,7 +72,7 @@ export const bookDetail = async (req, res, next) => {
 export const bookCreateGet = async (req, res, next) => {
   try {
     const [authors, genres] = await Promise.all([
-      Book.find(),
+      Author.find(),
       Genre.find(),
     ]);
 
@@ -86,9 +87,69 @@ export const bookCreateGet = async (req, res, next) => {
 };
 
 // Handle book create on POST.
-export const bookCreatePost = (req, res) => {
-  res.send("NOT IMPLEMENTED: Book create POST");
-};
+export const bookCreatePost = [
+  // Convert the genre to an array.
+  (req, res, next) => {
+    if (!Array.isArray(req.body.genre)) {
+      req.body.genre = typeof req.body.genre === "undefined" ? [] : [req.body.genre];
+    }
+    next();
+  },
+
+  // Validate and sanitize fields.
+  body("title", "Title must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("author", "Author must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("summary", "Summary must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("isbn", "ISBN must not be empty").trim().isLength({ min: 1 }).escape(),
+  body("genre.*").escape(),
+
+  // Process request after validation and sanitization.
+  async (req, res) => {
+    const errors = validationResult(req);
+
+    const book = new Book({
+      title: req.body.title,
+      author: req.body.author,
+      summary: req.body.summary,
+      isbn: req.body.isbn,
+      genre: req.body.genre,
+    });
+
+    if (!errors.isEmpty()) {
+      const [authors, genres] = await Promise.all([
+        Author.find(),
+        Genre.find(),
+      ]);
+
+      genres.forEach((genre) => {
+        if (book.genre.includes(genre._id)) {
+          genre.checked = "true";
+        }
+      });
+
+      res.render("bookForm", {
+        title: "Create Book",
+        authors,
+        genres,
+        book,
+        errors: errors.array(),
+      });
+      return;
+    }
+
+    book.save().then(() => res.redirect(book.url));
+  },
+
+];
 
 // Display book delete form on GET.
 export const bookDeleteGet = (req, res) => {
